@@ -26,44 +26,12 @@ pipeline {
             steps {
                 sh '''
                 aws eks update-kubeconfig --name trend-cluster --region ap-southeast-2
-                cat > k8s-deply-yml <<'EOF'
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: trend-app
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: trend-app
-  template:
-    metadata:
-      labels:
-        app: trend-app
-    spec:
-      containers:
-            - name: trend-app
-        image: 146364515119.dkr.ecr.ap-southeast-2.amazonaws.com/trend-app:latest
-        ports:
-                - containerPort: 80
-EOF
-                cat > k8s-serv-yml <<'EOF'
-apiVersion: v1
-kind: Service
-metadata:
-  name: trend-app-service
-spec:
-  type: LoadBalancer
-  selector:
-    app: trend-app
-  ports:
-    - port: 80
-    targetPort: 80
-EOF
-                kubectl apply -f k8s-deply-yml
-                kubectl apply -f k8s-serv-yml
+                kubectl create deployment trend-app --image=146364515119.dkr.ecr.ap-southeast-2.amazonaws.com/trend-app:latest --replicas=2 --port=80 || true
+                kubectl set image deployment/trend-app trend-app=146364515119.dkr.ecr.ap-southeast-2.amazonaws.com/trend-app:${BUILD_NUMBER}
+                kubectl expose deployment trend-app --type=LoadBalancer --port=80 --target-port=80 || true
                 kubectl rollout status deployment/trend-app
-                kubectl get svc trend-app-service
+                kubectl get pods
+                kubectl get svc trend-app
                 '''
             }
         }
