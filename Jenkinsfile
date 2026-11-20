@@ -26,7 +26,7 @@
             steps {
                 sh '''
                 aws eks update-kubeconfig --name trend-cluster --region ap-southeast-2
-                kubectl apply -f k8s-dep-yml
+                kubectl apply -f k8s-deply-yml
                 kubectl apply -f k8s-serv-yml
                 kubectl set image deployment/trend-app trend-app=146364515119.dkr.ecr.ap-southeast-2.amazonaws.com/trend-app:${BUILD_NUMBER} || true
                 kubectl rollout status deployment/trend-app
