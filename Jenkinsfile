@@ -1,4 +1,4 @@
-   pipeline {
+pipeline {
     agent any
     environment {
         AWS_REGION = 'ap-southeast-2'
@@ -23,10 +23,10 @@
             }
         }
         stage('Deploy to EKS') {
-    steps {
-        sh '''
-        aws eks update-kubeconfig --name trend-cluster --region ap-southeast-2
-        cat > k8s-deply-yml <<'EOF'
+            steps {
+                sh '''
+                aws eks update-kubeconfig --name trend-cluster --region ap-southeast-2
+                cat > k8s-deply-yml <<'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -47,7 +47,7 @@ spec:
         ports:
                 - containerPort: 80
 EOF
-        cat > k8s-serv-yml <<'EOF'
+                cat > k8s-serv-yml <<'EOF'
 apiVersion: v1
 kind: Service
 metadata:
@@ -60,13 +60,12 @@ spec:
     - port: 80
     targetPort: 80
 EOF
-        kubectl apply -f k8s-deply-yml
-        kubectl apply -f k8s-serv-yml
-        kubectl rollout status deployment/trend-app
-        kubectl get svc trend-app-service
-        '''
-    }
-}
+                kubectl apply -f k8s-deply-yml
+                kubectl apply -f k8s-serv-yml
+                kubectl rollout status deployment/trend-app
+                kubectl get svc trend-app-service
+                '''
+            }
         }
     }
 }
