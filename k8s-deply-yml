@@ -1,3 +1,4 @@
+cat > k8s-deply-yml << 'EOF'
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,6 +15,7 @@ spec:
     spec:
       containers:
             - name: trend-app
-        image: 146364515119.dkr.ecr.ap-southeast-2.amazonaws.com/trend-app:latest
+        image: sudha15/trend-app:latest
         ports:
                 - containerPort: 80
+EOF
